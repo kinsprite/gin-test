@@ -5,7 +5,7 @@ on Windows:
 ```cmd
 set GOPROXY=https://goproxy.io
 set GIN_MODE=release
-go build -tags=jsoniter .
+go build -tags=jsoniter -o gin-test .
 ```
 
 or Linux:
@@ -13,7 +13,7 @@ or Linux:
 ```shell
 export GOPROXY=https://goproxy.io
 export GIN_MODE=release
-go build -tags=jsoniter .
+go build -tags=jsoniter -o gin-test .
 ```
 
 

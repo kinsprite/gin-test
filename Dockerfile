@@ -1,14 +1,23 @@
-FROM golang:1.12.6-alpine3.9
+# build
+FROM golang:1.12.6-alpine3.9 as build
 
 ENV PORT 8080
 EXPOSE 8080
 
 RUN mkdir /app
 ADD . /app
-WORKDIR  /app
 
 ENV GOPROXY https://goproxy.io
 ENV GIN_MODE release
-RUN go build -tags=jsoniter -o gin-test .
 
+WORKDIR  /app/src
+RUN go build -tags=jsoniter -o ../gin-test .
+
+
+# release
+FROM alpine:3.9
+RUN mkdir /app
+COPY --from=build /app/gin-test /app/gin-test
+
+WORKDIR  /app
 CMD ["/app/gin-test"]
