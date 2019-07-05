@@ -21,5 +21,8 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
+        env:
+          - name: ELASTIC_APM_SERVER_URL
+            value: "{{ .Values.apmServerUrl }}"
         resources:
 {{ toYaml .Values.resources | indent 12 }}
