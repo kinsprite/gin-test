@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
 	"go.elastic.co/apm/module/apmgin"
+	"gopkg.in/resty.v1"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -62,6 +63,23 @@ func main() {
 
 		c.JSON(http.StatusOK, gin.H{
 			"message":  "all products' details",
+			"userId":   userInfo.ID(),
+			"userName": userInfo.Name(),
+		})
+	})
+
+	v2.GET("/userInfo", func(c *gin.Context) {
+		resp, err := resty.R().Get(userHost + "/v1/userInfoBySession")
+
+		if err != nil {
+			log.Println("ERROR   request user info")
+			return
+		}
+
+		var userInfo UserInfo
+		json.Unmarshal(resp.Body(), userInfo)
+
+		c.JSON(http.StatusOK, gin.H{
 			"userId":   userInfo.ID(),
 			"userName": userInfo.Name(),
 		})
