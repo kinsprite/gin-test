@@ -1,4 +1,11 @@
 
+# dependencies
+```
+go get -u -v github.com/json-iterator/go
+go get -u -v github.com/gin-gonic/gin
+go get -u -v go.elastic.co/apm/module/apmgin
+```
+
 # build
 
 on Windows:

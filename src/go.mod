@@ -7,6 +7,7 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.4.0
 	github.com/google/go-cmp v0.3.0 // indirect
+	github.com/json-iterator/go v1.1.6
 	github.com/kr/pty v1.1.4 // indirect
 	github.com/mattn/go-isatty v0.0.8 // indirect
 	github.com/prometheus/procfs v0.0.2 // indirect

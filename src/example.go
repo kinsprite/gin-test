@@ -1,19 +1,69 @@
 package main
 
 import (
+	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	jsoniter "github.com/json-iterator/go"
 	"go.elastic.co/apm/module/apmgin"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
+const prefixV1 = "/gin-test/v1"
+const prefixV2 = "/gin-test/v2"
+
+var userHost = "http://user-test:80"
+
+func init() {
+	host := os.Getenv("USER_HOST")
+
+	if host != "" {
+		userHost = host
+	}
+}
 
 func main() {
 	engine := gin.New()
 	engine.Use(apmgin.Middleware(engine))
 
-	engine.GET("/ping", func(c *gin.Context) {
+	v1 := engine.Group(prefixV1)
+
+	v1.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
+		})
+	})
+
+	v2 := engine.Group(prefixV2)
+
+	v2.GET("/productsDetails", func(c *gin.Context) {
+		resp, err := http.Get(userHost + "/v1/userInfoBySession")
+
+		if err != nil {
+			log.Println("ERROR   request user info")
+			return
+		}
+
+		defer resp.Body.Close()
+
+		body, err := ioutil.ReadAll(resp.Body)
+
+		if err != nil {
+			log.Println("ERROR   reading user info")
+			return
+		}
+
+		var userInfo UserInfo
+		json.Unmarshal(body, userInfo)
+
+		c.JSON(http.StatusOK, gin.H{
+			"message":  "all products' details",
+			"userId":   userInfo.ID(),
+			"userName": userInfo.Name(),
 		})
 	})
 
