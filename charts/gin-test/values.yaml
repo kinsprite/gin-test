@@ -19,3 +19,4 @@ resources:
 ingress:
   enabled: false
 apmServerUrl: 'http://apm-server.logging:8200'
+userServerUrl: 'http://user-test-user-test:80'

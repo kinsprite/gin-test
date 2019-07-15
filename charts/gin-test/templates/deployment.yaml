@@ -24,5 +24,7 @@ spec:
         env:
           - name: ELASTIC_APM_SERVER_URL
             value: "{{ .Values.apmServerUrl }}"
+          - name: USER_SERVER_URL
+            value: "{{ .Values.userServerUrl }}"
         resources:
 {{ toYaml .Values.resources | indent 12 }}

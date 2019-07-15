@@ -14,16 +14,16 @@ import (
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-const prefixV1 = "/gin-test/v1"
-const prefixV2 = "/gin-test/v2"
+const prefixV1 = "/api/gin/v1"
+const prefixV2 = "/api/gin/v2"
 
-var userHost = "http://user-test:80"
+var userServerURL = "http://user-test:80"
 
 func init() {
-	host := os.Getenv("USER_HOST")
+	url := os.Getenv("USER_SERVER_URL")
 
-	if host != "" {
-		userHost = host
+	if url != "" {
+		userServerURL = url
 	}
 }
 
@@ -42,7 +42,7 @@ func main() {
 	v2 := engine.Group(prefixV2)
 
 	v2.GET("/productsDetails", func(c *gin.Context) {
-		resp, err := http.Get(userHost + "/v1/userInfoBySession")
+		resp, err := http.Get(userServerURL + "/api/user/v1/userInfoBySession")
 
 		if err != nil {
 			log.Println("ERROR   request user info")
@@ -59,17 +59,17 @@ func main() {
 		}
 
 		var userInfo UserInfo
-		json.Unmarshal(body, userInfo)
+		json.Unmarshal(body, &userInfo)
 
 		c.JSON(http.StatusOK, gin.H{
 			"message":  "all products' details",
-			"userId":   userInfo.ID(),
-			"userName": userInfo.Name(),
+			"userId":   userInfo.ID,
+			"userName": userInfo.Name,
 		})
 	})
 
 	v2.GET("/userInfo", func(c *gin.Context) {
-		resp, err := resty.R().Get(userHost + "/v1/userInfoBySession")
+		resp, err := resty.R().Get(userServerURL + "/api/user/v1/userInfoBySession")
 
 		if err != nil {
 			log.Println("ERROR   request user info")
@@ -77,11 +77,11 @@ func main() {
 		}
 
 		var userInfo UserInfo
-		json.Unmarshal(resp.Body(), userInfo)
+		json.Unmarshal(resp.Body(), &userInfo)
 
 		c.JSON(http.StatusOK, gin.H{
-			"userId":   userInfo.ID(),
-			"userName": userInfo.Name(),
+			"userId":   userInfo.ID,
+			"userName": userInfo.Name,
 		})
 	})
 
