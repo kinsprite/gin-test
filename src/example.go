@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -8,11 +9,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
+	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmgin"
-	"gopkg.in/resty.v1"
+	"go.elastic.co/apm/module/apmhttp"
+	"golang.org/x/net/context/ctxhttp"
+	// "gopkg.in/resty.v1"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
+var tracingClient = apmhttp.WrapClient(http.DefaultClient)
 
 const prefixV1 = "/api/gin/v1"
 const prefixV2 = "/api/gin/v2"
@@ -42,10 +47,13 @@ func main() {
 	v2 := engine.Group(prefixV2)
 
 	v2.GET("/productsDetails", func(c *gin.Context) {
-		resp, err := http.Get(userServerURL + "/api/user/v1/userInfoBySession")
+		req := c.Request
+		resp, err := ctxhttp.Get(req.Context(), tracingClient, userServerURL+"/api/user/v1/userInfoBySession")
 
 		if err != nil {
+			apm.CaptureError(req.Context(), err).Send()
 			log.Println("ERROR   request user info")
+			c.AbortWithError(500, errors.New("failed to query backend"))
 			return
 		}
 
@@ -68,22 +76,22 @@ func main() {
 		})
 	})
 
-	v2.GET("/userInfo", func(c *gin.Context) {
-		resp, err := resty.R().Get(userServerURL + "/api/user/v1/userInfoBySession")
+	// v2.GET("/userInfo", func(c *gin.Context) {
+	// 	resp, err := resty.R().Get(userServerURL + "/api/user/v1/userInfoBySession")
 
-		if err != nil {
-			log.Println("ERROR   request user info")
-			return
-		}
+	// 	if err != nil {
+	// 		log.Println("ERROR   request user info")
+	// 		return
+	// 	}
 
-		var userInfo UserInfo
-		json.Unmarshal(resp.Body(), &userInfo)
+	// 	var userInfo UserInfo
+	// 	json.Unmarshal(resp.Body(), &userInfo)
 
-		c.JSON(http.StatusOK, gin.H{
-			"userId":   userInfo.ID,
-			"userName": userInfo.Name,
-		})
-	})
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"userId":   userInfo.ID,
+	// 		"userName": userInfo.Name,
+	// 	})
+	// })
 
 	engine.Run(":8080") // 监听并在 0.0.0.0:8080 上启动服务
 }
