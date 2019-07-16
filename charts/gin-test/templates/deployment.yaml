@@ -26,5 +26,7 @@ spec:
             value: "{{ .Values.apmServerUrl }}"
           - name: USER_SERVER_URL
             value: "{{ .Values.userServerUrl }}"
+          - name: PRODUCT_SERVER_ADDRESS
+            value: "{{ .Values.productServerAddress }}"
         resources:
 {{ toYaml .Values.resources | indent 12 }}

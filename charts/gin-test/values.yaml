@@ -20,3 +20,4 @@ ingress:
   enabled: false
 apmServerUrl: 'http://apm-server.logging:8200'
 userServerUrl: 'http://user-test-user-test:80'
+productServerAddress: 'producttest-producttest:80'

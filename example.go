@@ -13,6 +13,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmgin"
+	"go.elastic.co/apm/module/apmgrpc"
 	"go.elastic.co/apm/module/apmhttp"
 	"golang.org/x/net/context/ctxhttp"
 	"google.golang.org/grpc"
@@ -28,7 +29,7 @@ const prefixV1 = "/api/gin/v1"
 const prefixV2 = "/api/gin/v2"
 
 var userServerURL = "http://user-test:80"
-var productServerAddress = "product-test:50051"
+var productServerAddress = "producttest:80"
 
 const (
 	defaultName = "world"
@@ -50,7 +51,8 @@ func init() {
 
 func fetchProduct() {
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(productServerAddress, grpc.WithInsecure())
+	conn, err := grpc.Dial(productServerAddress, grpc.WithInsecure(),
+		grpc.WithUnaryInterceptor(apmgrpc.NewUnaryClientInterceptor()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

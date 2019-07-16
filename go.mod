@@ -14,6 +14,7 @@ require (
 	github.com/santhosh-tekuri/jsonschema v1.2.4 // indirect
 	go.elastic.co/apm v1.4.0
 	go.elastic.co/apm/module/apmgin v1.4.0
+	go.elastic.co/apm/module/apmgrpc v1.4.0
 	go.elastic.co/apm/module/apmhttp v1.4.0
 	golang.org/x/net v0.0.0-20190628185345-da137c7871d7
 	golang.org/x/sys v0.0.0-20190710143415-6ec70d6a5542 // indirect
