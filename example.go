@@ -49,7 +49,7 @@ func init() {
 	}
 }
 
-func fetchProduct() {
+func fetchProduct() string {
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(productServerAddress, grpc.WithInsecure(),
 		grpc.WithUnaryInterceptor(apmgrpc.NewUnaryClientInterceptor()))
@@ -72,11 +72,14 @@ func fetchProduct() {
 	}
 	log.Printf("Greeting: %s", r.Message)
 
+	result := r.Message
+
 	r, err = c.SayHelloAgain(ctx, &pb.HelloRequest{Name: name})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
 	log.Printf("Greeting: %s", r.Message)
+	return result
 }
 
 func main() {
@@ -116,12 +119,13 @@ func main() {
 		var userInfo UserInfo
 		json.Unmarshal(body, &userInfo)
 
-		fetchProduct()
+		productMsg := fetchProduct()
 
 		c.JSON(http.StatusOK, gin.H{
-			"message":  "all products' details",
-			"userId":   userInfo.ID,
-			"userName": userInfo.Name,
+			"message":    "all products' details",
+			"userId":     userInfo.ID,
+			"userName":   userInfo.Name,
+			"productMsg": productMsg,
 		})
 	})
 

@@ -10,8 +10,9 @@ ADD . /app
 ENV GOPROXY https://goproxy.io
 ENV GIN_MODE release
 
-WORKDIR  /app/src
-RUN go build -tags=jsoniter -o ../gin-test .
+WORKDIR  /app
+RUN go mod vendor
+RUN go build -mod=vendor -tags=jsoniter -o gin-test .
 
 
 # release
