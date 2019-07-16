@@ -49,7 +49,7 @@ func init() {
 	}
 }
 
-func fetchProduct() string {
+func fetchProduct(ctxParent context.Context) string {
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(productServerAddress, grpc.WithInsecure(),
 		grpc.WithUnaryInterceptor(apmgrpc.NewUnaryClientInterceptor()))
@@ -64,7 +64,7 @@ func fetchProduct() string {
 	if len(os.Args) > 1 {
 		name = os.Args[1]
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(ctxParent, time.Second)
 	defer cancel()
 	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
 	if err != nil {
@@ -119,7 +119,7 @@ func main() {
 		var userInfo UserInfo
 		json.Unmarshal(body, &userInfo)
 
-		productMsg := fetchProduct()
+		productMsg := fetchProduct(req.Context())
 
 		c.JSON(http.StatusOK, gin.H{
 			"message":    "all products' details",
