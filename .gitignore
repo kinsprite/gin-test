@@ -1,1 +1,2 @@
-gin-test.exe
+*.exe
+vendor/

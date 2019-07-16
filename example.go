@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
@@ -13,7 +15,10 @@ import (
 	"go.elastic.co/apm/module/apmgin"
 	"go.elastic.co/apm/module/apmhttp"
 	"golang.org/x/net/context/ctxhttp"
+	"google.golang.org/grpc"
+
 	// "gopkg.in/resty.v1"
+	pb "github.com/kinsprite/producttest/pb"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -23,6 +28,11 @@ const prefixV1 = "/api/gin/v1"
 const prefixV2 = "/api/gin/v2"
 
 var userServerURL = "http://user-test:80"
+var productServerAddress = "product-test:50051"
+
+const (
+	defaultName = "world"
+)
 
 func init() {
 	url := os.Getenv("USER_SERVER_URL")
@@ -30,6 +40,41 @@ func init() {
 	if url != "" {
 		userServerURL = url
 	}
+
+	address := os.Getenv("PRODUCT_SERVER_ADDRESS")
+
+	if address != "" {
+		productServerAddress = address
+	}
+}
+
+func fetchProduct() {
+	// Set up a connection to the server.
+	conn, err := grpc.Dial(productServerAddress, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewGreeterClient(conn)
+
+	// Contact the server and print out its response.
+	name := defaultName
+	if len(os.Args) > 1 {
+		name = os.Args[1]
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("Greeting: %s", r.Message)
+
+	r, err = c.SayHelloAgain(ctx, &pb.HelloRequest{Name: name})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("Greeting: %s", r.Message)
 }
 
 func main() {
@@ -68,6 +113,8 @@ func main() {
 
 		var userInfo UserInfo
 		json.Unmarshal(body, &userInfo)
+
+		fetchProduct()
 
 		c.JSON(http.StatusOK, gin.H{
 			"message":  "all products' details",
