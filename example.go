@@ -103,7 +103,7 @@ func main() {
 		if err != nil {
 			apm.CaptureError(req.Context(), err).Send()
 			log.Println("ERROR   request user info")
-			c.AbortWithError(500, errors.New("failed to query backend"))
+			c.AbortWithError(http.StatusInternalServerError, errors.New("failed to query backend"))
 			return
 		}
 
@@ -142,8 +142,8 @@ func main() {
 
 		if err != nil {
 			apm.CaptureError(req.Context(), err).Send()
-			log.Println("ERROR   create user info")
-			c.AbortWithError(500, errors.New("failed to query backend"))
+			log.Println("ERROR   create user info, ", err)
+			c.AbortWithError(http.StatusInternalServerError, errors.New("failed to query backend"))
 			return
 		}
 
