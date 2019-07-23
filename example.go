@@ -125,11 +125,12 @@ func main() {
 			"message":    "all products' details",
 			"userId":     userInfo.ID,
 			"userName":   userInfo.Name,
+			"userEmail":  userInfo.Email,
 			"productMsg": productMsg,
 		})
 	})
 
-	v2.POST("/newUser", func(c *gin.Context) {
+	v2.POST("/createUser", func(c *gin.Context) {
 		req := c.Request
 		resp, err := ctxhttp.Post(
 			req.Context(),
