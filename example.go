@@ -136,7 +136,7 @@ func main() {
 			req.Context(),
 			tracingClient,
 			userServerURL+"/api/user/v1/new",
-			"application/json;charset=utf-8",
+			req.Header.Get("Content-Type"),
 			c.Request.Body,
 		)
 
