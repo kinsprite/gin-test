@@ -129,6 +129,34 @@ func main() {
 		})
 	})
 
+	v2.POST("/newUser", func(c *gin.Context) {
+		req := c.Request
+		resp, err := ctxhttp.Post(
+			req.Context(),
+			tracingClient,
+			userServerURL+"/api/user/v1/new",
+			"application/json;charset=utf-8",
+			c.Request.Body,
+		)
+
+		if err != nil {
+			apm.CaptureError(req.Context(), err).Send()
+			log.Println("ERROR   create user info")
+			c.AbortWithError(500, errors.New("failed to query backend"))
+			return
+		}
+
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+
+		if err != nil {
+			log.Println("ERROR   reading user info")
+			return
+		}
+
+		c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
+	})
+
 	// v2.GET("/userInfo", func(c *gin.Context) {
 	// 	resp, err := resty.R().Get(userServerURL + "/api/user/v1/userInfoBySession")
 
