@@ -29,5 +29,15 @@ spec:
             value: "{{ .Values.userServerUrl }}"
           - name: PRODUCT_SERVER_ADDRESS
             value: "{{ .Values.productServerAddress }}"
+          - name: SQL_DRIVER_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: user-db-config
+                key: driverName
+          - name: SQL_DATA_SOURCE_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: user-db-config
+                key: ginDSN
         resources:
 {{ toYaml .Values.resources | indent 12 }}

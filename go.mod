@@ -3,6 +3,7 @@ module gintest
 go 1.12
 
 require (
+	github.com/99designs/gqlgen v0.9.1
 	github.com/elastic/go-sysinfo v1.0.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.4.0
@@ -12,6 +13,7 @@ require (
 	github.com/mattn/go-isatty v0.0.8 // indirect
 	github.com/prometheus/procfs v0.0.2 // indirect
 	github.com/santhosh-tekuri/jsonschema v1.2.4 // indirect
+	github.com/vektah/gqlparser v1.1.2
 	go.elastic.co/apm v1.4.0
 	go.elastic.co/apm/module/apmgin v1.4.0
 	go.elastic.co/apm/module/apmgrpc v1.4.0

@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/99designs/gqlgen/handler"
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
 	"go.elastic.co/apm"
@@ -94,6 +95,9 @@ func main() {
 		})
 	})
 
+	v1.POST("/query", graphqlHandler())
+	v1.GET("/", playgroundHandler())
+
 	v2 := engine.Group(prefixV2)
 
 	v2.GET("/productsDetails", func(c *gin.Context) {
@@ -176,4 +180,24 @@ func main() {
 	// })
 
 	engine.Run(":8080") // 监听并在 0.0.0.0:8080 上启动服务
+}
+
+// Defining the Graphql handler
+func graphqlHandler() gin.HandlerFunc {
+	// NewExecutableSchema and Config are in the generated.go file
+	// Resolver is in the resolver.go file
+	h := handler.GraphQL(NewExecutableSchema(Config{Resolvers: &Resolver{}}))
+
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
+}
+
+// Defining the Playground handler
+func playgroundHandler() gin.HandlerFunc {
+	h := handler.Playground("GraphQL", prefixV1+"/query")
+
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
 }
