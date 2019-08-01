@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 replicaCount: 1
-revisionHistoryLimit: 2
+revisionHistoryLimit: 1
 image:
   pullPolicy: IfNotPresent
 service:
@@ -20,5 +20,5 @@ resources:
 ingress:
   enabled: false
 apmServerUrl: 'http://apm-server.logging:8200'
-userServerUrl: 'http://user-test-user-test:80'
-productServerAddress: 'producttest-producttest:80'
+userServerUrl: 'http://user-test:80'
+productServerAddress: 'product-test:80'

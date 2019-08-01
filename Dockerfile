@@ -1,5 +1,5 @@
 # build
-FROM golang:1.12.6-alpine3.9 as build
+FROM golang:1.12.7-alpine3.10 as build
 
 ENV PORT 8080
 EXPOSE 8080
@@ -16,7 +16,7 @@ RUN go build -mod=vendor -tags=jsoniter -o gin-test .
 
 
 # release
-FROM alpine:3.9
+FROM alpine:3.10
 RUN mkdir /app
 COPY --from=build /app/gin-test /app/gin-test
 
