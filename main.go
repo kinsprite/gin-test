@@ -84,6 +84,9 @@ func fetchProduct(ctxParent context.Context) string {
 }
 
 func main() {
+	initDB()
+	defer closeDB()
+
 	engine := gin.New()
 	engine.Use(apmgin.Middleware(engine))
 
