@@ -8,6 +8,7 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.4.0
 	github.com/google/go-cmp v0.3.0 // indirect
+	github.com/jinzhu/gorm v1.9.10
 	github.com/json-iterator/go v1.1.6
 	github.com/kinsprite/producttest v0.0.6
 	github.com/mattn/go-isatty v0.0.8 // indirect

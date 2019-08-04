@@ -3,8 +3,6 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"math/rand"
 ) // THIS CODE IS A STARTING POINT ONLY. IT WILL NOT BE UPDATED WITH SCHEMA CHANGES.
 
 type Resolver struct {
@@ -25,22 +23,26 @@ type mutationResolver struct{ *Resolver }
 
 func (r *mutationResolver) CreateTodo(ctx context.Context, input NewTodo) (*Todo, error) {
 	todo := &Todo{
-		Text:   input.Text,
-		ID:     fmt.Sprintf("T%d", rand.Int()),
+		Text: input.Text,
+		// ID:     fmt.Sprintf("T%d", rand.Int()),
 		UserID: input.UserID,
 	}
-	r.todos = append(r.todos, todo)
+
+	saveNewTodo(ctx, todo)
+	// r.todos = append(r.todos, todo)
 	return todo, nil
 }
 
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) Todos(ctx context.Context) ([]*Todo, error) {
-	return r.todos, nil
+	return loadTodos(ctx)
+	// return r.todos, nil
 }
 
 type todoResolver struct{ *Resolver }
 
 func (r *todoResolver) User(ctx context.Context, obj *Todo) (*User, error) {
-	return &User{ID: obj.UserID, Name: "user " + obj.UserID}, nil
+	return loadUser(ctx, obj.UserID)
+	// return &User{ID: obj.UserID, Name: "user " + obj.UserID}, nil
 }
