@@ -15,4 +15,4 @@ resolver:
 autobind: []
 models:
   Todo:
-    model: github.com/kinsprite/gqlgen-todos.Todo
+    model: github.com/kinsprite/gintest.Todo

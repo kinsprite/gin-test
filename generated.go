@@ -45,6 +45,7 @@ type DirectiveRoot struct {
 type ComplexityRoot struct {
 	Mutation struct {
 		CreateTodo func(childComplexity int, input NewTodo) int
+		CreateUser func(childComplexity int, input NewUser) int
 	}
 
 	Query struct {
@@ -66,6 +67,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateTodo(ctx context.Context, input NewTodo) (*Todo, error)
+	CreateUser(ctx context.Context, input NewUser) (*User, error)
 }
 type QueryResolver interface {
 	Todos(ctx context.Context) ([]*Todo, error)
@@ -100,6 +102,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateTodo(childComplexity, args["input"].(NewTodo)), true
+
+	case "Mutation.createUser":
+		if e.complexity.Mutation.CreateUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createUser_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(NewUser)), true
 
 	case "Query.todos":
 		if e.complexity.Query.Todos == nil {
@@ -233,9 +247,15 @@ input NewTodo {
   userId: String!
 }
 
+input NewUser {
+  name: String!
+}
+
 type Mutation {
   createTodo(input: NewTodo!): Todo!
-}`},
+  createUser(input: NewUser!): User!
+}
+`},
 )
 
 // endregion ************************** generated!.gotpl **************************
@@ -247,7 +267,21 @@ func (ec *executionContext) field_Mutation_createTodo_args(ctx context.Context, 
 	args := map[string]interface{}{}
 	var arg0 NewTodo
 	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalNNewTodo2githubᚗcomᚋkinspriteᚋgqlgenᚑtodosᚐNewTodo(ctx, tmp)
+		arg0, err = ec.unmarshalNNewTodo2githubᚗcomᚋkinspriteᚋgintestᚐNewTodo(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 NewUser
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNNewUser2githubᚗcomᚋkinspriteᚋgintestᚐNewUser(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -347,7 +381,51 @@ func (ec *executionContext) _Mutation_createTodo(ctx context.Context, field grap
 	res := resTmp.(*Todo)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNTodo2ᚖgithubᚗcomᚋkinspriteᚋgqlgenᚑtodosᚐTodo(ctx, field.Selections, res)
+	return ec.marshalNTodo2ᚖgithubᚗcomᚋkinspriteᚋgintestᚐTodo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createUser_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateUser(rctx, args["input"].(NewUser))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*User)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkinspriteᚋgintestᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_todos(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -384,7 +462,7 @@ func (ec *executionContext) _Query_todos(ctx context.Context, field graphql.Coll
 	res := resTmp.([]*Todo)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNTodo2ᚕᚖgithubᚗcomᚋkinspriteᚋgqlgenᚑtodosᚐTodo(ctx, field.Selections, res)
+	return ec.marshalNTodo2ᚕᚖgithubᚗcomᚋkinspriteᚋgintestᚐTodo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -607,7 +685,7 @@ func (ec *executionContext) _Todo_user(ctx context.Context, field graphql.Collec
 	res := resTmp.(*User)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNUser2ᚖgithubᚗcomᚋkinspriteᚋgqlgenᚑtodosᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋkinspriteᚋgintestᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *User) (ret graphql.Marshaler) {
@@ -1859,6 +1937,24 @@ func (ec *executionContext) unmarshalInputNewTodo(ctx context.Context, obj inter
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj interface{}) (NewUser, error) {
+	var it NewUser
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -1884,6 +1980,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "createTodo":
 			out.Values[i] = ec._Mutation_createTodo(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createUser":
+			out.Values[i] = ec._Mutation_createUser(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2298,8 +2399,12 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) unmarshalNNewTodo2githubᚗcomᚋkinspriteᚋgqlgenᚑtodosᚐNewTodo(ctx context.Context, v interface{}) (NewTodo, error) {
+func (ec *executionContext) unmarshalNNewTodo2githubᚗcomᚋkinspriteᚋgintestᚐNewTodo(ctx context.Context, v interface{}) (NewTodo, error) {
 	return ec.unmarshalInputNewTodo(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNNewUser2githubᚗcomᚋkinspriteᚋgintestᚐNewUser(ctx context.Context, v interface{}) (NewUser, error) {
+	return ec.unmarshalInputNewUser(ctx, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -2316,11 +2421,11 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNTodo2githubᚗcomᚋkinspriteᚋgqlgenᚑtodosᚐTodo(ctx context.Context, sel ast.SelectionSet, v Todo) graphql.Marshaler {
+func (ec *executionContext) marshalNTodo2githubᚗcomᚋkinspriteᚋgintestᚐTodo(ctx context.Context, sel ast.SelectionSet, v Todo) graphql.Marshaler {
 	return ec._Todo(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTodo2ᚕᚖgithubᚗcomᚋkinspriteᚋgqlgenᚑtodosᚐTodo(ctx context.Context, sel ast.SelectionSet, v []*Todo) graphql.Marshaler {
+func (ec *executionContext) marshalNTodo2ᚕᚖgithubᚗcomᚋkinspriteᚋgintestᚐTodo(ctx context.Context, sel ast.SelectionSet, v []*Todo) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2344,7 +2449,7 @@ func (ec *executionContext) marshalNTodo2ᚕᚖgithubᚗcomᚋkinspriteᚋgqlgen
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTodo2ᚖgithubᚗcomᚋkinspriteᚋgqlgenᚑtodosᚐTodo(ctx, sel, v[i])
+			ret[i] = ec.marshalNTodo2ᚖgithubᚗcomᚋkinspriteᚋgintestᚐTodo(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -2357,7 +2462,7 @@ func (ec *executionContext) marshalNTodo2ᚕᚖgithubᚗcomᚋkinspriteᚋgqlgen
 	return ret
 }
 
-func (ec *executionContext) marshalNTodo2ᚖgithubᚗcomᚋkinspriteᚋgqlgenᚑtodosᚐTodo(ctx context.Context, sel ast.SelectionSet, v *Todo) graphql.Marshaler {
+func (ec *executionContext) marshalNTodo2ᚖgithubᚗcomᚋkinspriteᚋgintestᚐTodo(ctx context.Context, sel ast.SelectionSet, v *Todo) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -2367,11 +2472,11 @@ func (ec *executionContext) marshalNTodo2ᚖgithubᚗcomᚋkinspriteᚋgqlgenᚑ
 	return ec._Todo(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUser2githubᚗcomᚋkinspriteᚋgqlgenᚑtodosᚐUser(ctx context.Context, sel ast.SelectionSet, v User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2githubᚗcomᚋkinspriteᚋgintestᚐUser(ctx context.Context, sel ast.SelectionSet, v User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋkinspriteᚋgqlgenᚑtodosᚐUser(ctx context.Context, sel ast.SelectionSet, v *User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋkinspriteᚋgintestᚐUser(ctx context.Context, sel ast.SelectionSet, v *User) graphql.Marshaler {
 	if v == nil {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")

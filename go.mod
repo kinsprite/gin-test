@@ -1,4 +1,4 @@
-module gintest
+module github.com/kinsprite/gintest
 
 go 1.12
 
@@ -10,6 +10,7 @@ require (
 	github.com/google/go-cmp v0.3.0 // indirect
 	github.com/jinzhu/gorm v1.9.10
 	github.com/json-iterator/go v1.1.6
+	github.com/kinsprite/gqlgen-todos v0.0.0-20190730175632-9367229f2208
 	github.com/kinsprite/producttest v0.0.6
 	github.com/mattn/go-isatty v0.0.8 // indirect
 	github.com/prometheus/procfs v0.0.2 // indirect

@@ -33,6 +33,10 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input NewTodo) (*Todo
 	return todo, nil
 }
 
+func (r *mutationResolver) CreateUser(ctx context.Context, input NewUser) (*User, error) {
+	return saveNewUser(ctx, input.Name)
+}
+
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) Todos(ctx context.Context) ([]*Todo, error) {
