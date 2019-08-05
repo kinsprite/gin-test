@@ -60,6 +60,11 @@ func initDB() {
 	driverName := os.Getenv("SQL_DRIVER_NAME")
 	dataSourceName := os.Getenv("SQL_DATA_SOURCE_NAME")
 
+	if dataSourceName == "" {
+		log.Println("ERROR   evn SQL_DRIVER_NAME and SQL_DATA_SOURCE_NAME required")
+		return
+	}
+
 	var err error
 	db, err = gorm.Open(driverName, dataSourceName)
 

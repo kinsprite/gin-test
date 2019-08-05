@@ -90,6 +90,12 @@ func main() {
 	engine := gin.New()
 	engine.Use(apmgin.Middleware(engine))
 
+	engine.GET("/healthz", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "OK",
+		})
+	})
+
 	v1 := engine.Group(prefixV1)
 
 	v1.GET("/ping", func(c *gin.Context) {
