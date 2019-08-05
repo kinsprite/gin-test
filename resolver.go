@@ -37,6 +37,25 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input NewUser) (*User
 	return saveNewUser(ctx, input.Name)
 }
 
+func (r *mutationResolver) UpdateTodo(ctx context.Context, input UpdateTodoInfo) (*Todo, error) {
+	todo := &Todo{
+		ID:   input.ID,
+		Text: input.Text,
+		Done: input.Done,
+	}
+
+	return updateTodo(ctx, todo)
+}
+
+func (r *mutationResolver) UpdateUser(ctx context.Context, input UpdateUserInfo) (*User, error) {
+	user := &User{
+		ID:   input.ID,
+		Name: input.Name,
+	}
+
+	return updateUser(ctx, user)
+}
+
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) Todos(ctx context.Context) ([]*Todo, error) {

@@ -91,6 +91,35 @@ func saveNewTodo(ctx context.Context, todo *Todo) {
 	todo.ID = idToStr(item.ID)
 }
 
+func updateTodo(ctx context.Context, todo *Todo) (*Todo, error) {
+	item := todoItem{}
+	id, err := strToID(todo.ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	item.ID = uint(id)
+	item.Text = todo.Text
+	item.Done = todo.Done
+
+	errors := db.Model(&item).Updates(item).GetErrors()
+
+	if len(errors) > 0 {
+		err = errors[0]
+		return nil, err
+	}
+
+	errors = db.First(&item, item.ID).GetErrors()
+
+	if len(errors) > 0 {
+		err = errors[0]
+		return nil, err
+	}
+
+	return item.toTodo(), err
+}
+
 func loadTodos(ctx context.Context) ([]*Todo, error) {
 	todoItems := []todoItem{}
 	errors := db.Find(&todoItems).GetErrors()
@@ -126,6 +155,35 @@ func saveNewUser(ctx context.Context, name string) (*User, error) {
 
 	user := item.toUser()
 	return user, err
+}
+
+func updateUser(ctx context.Context, user *User) (*User, error) {
+	item := userItem{}
+
+	id, err := strToID(user.ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	item.ID = uint(id)
+	item.Name = user.Name
+
+	errors := db.Model(&item).Updates(item).GetErrors()
+
+	if len(errors) > 0 {
+		err = errors[0]
+		return nil, err
+	}
+
+	errors = db.First(&item, item.ID).GetErrors()
+
+	if len(errors) > 0 {
+		err = errors[0]
+		return nil, err
+	}
+
+	return item.toUser(), err
 }
 
 func loadUsers(ctx context.Context) ([]*User, error) {
