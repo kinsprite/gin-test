@@ -44,6 +44,10 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*Todo, error) {
 	// return r.todos, nil
 }
 
+func (r *queryResolver) Users(ctx context.Context) ([]*User, error) {
+	return loadUsers(ctx)
+}
+
 type todoResolver struct{ *Resolver }
 
 func (r *todoResolver) User(ctx context.Context, obj *Todo) (*User, error) {

@@ -17,6 +17,15 @@ type userItem struct {
 	Name string
 }
 
+func (item *userItem) toUser() *User {
+	user := User{
+		ID:   idToStr(item.ID),
+		Name: item.Name,
+	}
+
+	return &user
+}
+
 type todoItem struct {
 	gorm.Model
 	Text   string
@@ -32,11 +41,19 @@ func (item *todoItem) fromNewTodo(todo *Todo) {
 
 func (item *todoItem) toTodo() *Todo {
 	var todo Todo
-	todo.ID = strconv.FormatInt(int64(item.ID), 10)
+	todo.ID = idToStr(item.ID)
 	todo.Text = item.Text
 	todo.Done = item.Done
 	todo.UserID = item.UserID
 	return &todo
+}
+
+func strToID(strID string) (uint64, error) {
+	return strconv.ParseUint(strID, 10, 0)
+}
+
+func idToStr(ID uint) string {
+	return strconv.FormatInt(int64(ID), 10)
 }
 
 func initDB() {
@@ -71,7 +88,7 @@ func saveNewTodo(ctx context.Context, todo *Todo) {
 	item := todoItem{}
 	item.fromNewTodo(todo)
 	db.Save(&item)
-	todo.ID = strconv.FormatInt(int64(item.ID), 10)
+	todo.ID = idToStr(item.ID)
 }
 
 func loadTodos(ctx context.Context) ([]*Todo, error) {
@@ -107,16 +124,31 @@ func saveNewUser(ctx context.Context, name string) (*User, error) {
 		return nil, err
 	}
 
-	user := User{
-		ID:   strconv.FormatInt(int64(item.ID), 10),
-		Name: name,
+	user := item.toUser()
+	return user, err
+}
+
+func loadUsers(ctx context.Context) ([]*User, error) {
+	userItems := []userItem{}
+	errors := db.Find(&userItems).GetErrors()
+
+	users := make([]*User, len(userItems))
+
+	for i, item := range userItems {
+		users[i] = item.toUser()
 	}
 
-	return &user, err
+	var err error
+
+	if len(errors) > 0 {
+		err = errors[0]
+	}
+
+	return users, err
 }
 
 func loadUser(ctx context.Context, userID string) (*User, error) {
-	id, err := strconv.ParseUint(userID, 10, 0)
+	id, err := strToID(userID)
 
 	if err != nil {
 		return nil, err
@@ -130,10 +162,6 @@ func loadUser(ctx context.Context, userID string) (*User, error) {
 		return nil, err
 	}
 
-	user := User{
-		ID:   strconv.FormatInt(int64(item.ID), 10),
-		Name: item.Name,
-	}
-
-	return &user, nil
+	user := item.toUser()
+	return user, nil
 }
