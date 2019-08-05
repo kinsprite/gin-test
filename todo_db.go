@@ -128,12 +128,12 @@ func loadUser(ctx context.Context, userID string) (*User, error) {
 	if len(errors) > 0 {
 		err = errors[0]
 		return nil, err
-	} else {
-		user := User{
-			ID:   strconv.FormatInt(int64(item.ID), 10),
-			Name: item.Name,
-		}
-
-		return &user, nil
 	}
+
+	user := User{
+		ID:   strconv.FormatInt(int64(item.ID), 10),
+		Name: item.Name,
+	}
+
+	return &user, nil
 }
