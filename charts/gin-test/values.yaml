@@ -6,7 +6,7 @@ revisionHistoryLimit: 1
 image:
   pullPolicy: IfNotPresent
 service:
-  name: golang
+  name: http-golang
   type: NodePort
   externalPort: 80
   internalPort: 8080
