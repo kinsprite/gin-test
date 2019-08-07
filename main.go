@@ -171,6 +171,10 @@ func main() {
 		c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
 	})
 
+	v2.POST("/mongo", func(c *gin.Context) {
+		c.JSON(http.StatusOK, mongoDemo())
+	})
+
 	// v2.GET("/userInfo", func(c *gin.Context) {
 	// 	resp, err := resty.R().Get(userServerURL + "/api/user/v1/userInfoBySession")
 
