@@ -52,12 +52,12 @@ spec:
           - name: SQL_DRIVER_NAME
             valueFrom:
               configMapKeyRef:
-                name: user-db-config
+                name: mysql-config
                 key: driverName
           - name: SQL_DATA_SOURCE_NAME
             valueFrom:
               configMapKeyRef:
-                name: user-db-config
+                name: mysql-config
                 key: ginDSN
         resources:
 {{ toYaml .Values.resources | indent 12 }}
