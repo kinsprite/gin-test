@@ -1,5 +1,5 @@
 # build
-FROM golang:1.12.7-alpine3.10 as build
+FROM golang:1.14.3-alpine3.11 as build
 
 ENV PORT 8080
 EXPOSE 8080
